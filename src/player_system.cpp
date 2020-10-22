@@ -3,7 +3,7 @@
 #include "components/controller.h"
 #include "components/player.h"
 #include "engine.h"
-#include "math/vector2.h"
+#include "structures/vector2.h"
 
 using namespace std;
 using Actors = Engine::Actors;
@@ -19,7 +19,7 @@ void PlayerSystem::update() {
 	Actors::forEach<Player, Controller>([&](Actor &actor) {
 		auto &controller = actor.get<Controller>();
 
-		if(move.sqr_magnitude() > 0)
+		if(move.sqrMagnitude() > 0)
 			move = move.normalized();
 
 		controller.move = move;

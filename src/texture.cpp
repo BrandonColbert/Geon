@@ -1,4 +1,4 @@
-#include "graphics/texture.h"
+#include "structures/texture.h"
 
 #include <cstdint>
 #include <utility>
@@ -18,8 +18,6 @@ Texture::Texture(string path) : path(path) {
 	texture = SDL_CreateTextureFromSurface(Engine::getInstance(), surface);
 	SDL_QueryTexture(texture, NULL, NULL, &width, &height);
 }
-
-#include <iostream>
 
 Texture::Texture(int width, int height, Color color) : path(""), width(width), height(height) {
 	surface = SDL_CreateRGBSurface(0, width, height, 32, 0, 0, 0, 0);

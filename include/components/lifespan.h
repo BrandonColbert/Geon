@@ -2,6 +2,9 @@
 
 #include "component.h"
 
+/**
+ * Destroys the actor of a set duration
+ */
 class Lifespan : public Component {
 	public:
 		/**

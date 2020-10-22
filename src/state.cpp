@@ -1,4 +1,4 @@
-#include "animation/state.h"
+#include "structures/state.h"
 
 using namespace std;
 

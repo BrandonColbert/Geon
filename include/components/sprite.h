@@ -1,8 +1,8 @@
 #pragma once
 
 #include "component.h"
-#include "graphics/texture.h"
-#include "math/vector2.h"
+#include "structures/texture.h"
+#include "structures/vector2.h"
 
 /**
  * Allows an object to be rendered
@@ -12,14 +12,14 @@ class Sprite : public Component {
 		/** Texture to use for rendering */
 		Texture texture;
 
-		/** Center point relative to texture */
-		Vector2 pivot;
-
 		/** Texture starting point */
 		Vector2 uv;
 
 		/** Texture width and height */
 		Vector2 size;
+
+		/** Center point relative to texture */
+		Vector2 pivot;
 
 		/** Whether to flip horizontally */
 		bool flipX = false;
@@ -27,12 +27,22 @@ class Sprite : public Component {
 		/** Whether to flip vertically */
 		bool flipY = false;
 
+		/** Render offset */
+		Vector2 offset;
+
 		/** Depth relative to other rendered objects */
-		float depth = 0;
+		float depth;
 
 		/**
 		 * @param texture Texture to use
+		 * @param depth Visual depth
 		 */
 		Sprite(Texture texture, float depth = 0);
+
+		/**
+		 * @param depth Visual depth
+		 */
+		Sprite(float depth);
+
 		Sprite();
 };

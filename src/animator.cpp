@@ -7,6 +7,12 @@
 using namespace std;
 using Time = Engine::Time;
 
+Animator::Animator(StateMachine stateMachine) : stateMachine(stateMachine) {}
+
+Animator::Animator() : stateMachine([](Actor &actor, string currentState) {
+	return currentState;
+}) {}
+
 void Animator::transition(string state) {
 	activeStateName = state;
 	epoch = Time::time;
@@ -18,6 +24,10 @@ void Animator::defineState(State state) {
 
 void Animator::removeState(string name) {
 	states.erase(name);
+}
+
+string Animator::evaluateState() {
+	return stateMachine(*actor, activeStateName);
 }
 
 float Animator::getProgress() {
@@ -41,4 +51,8 @@ bool Animator::hasState() {
 
 const State& Animator::getActiveState() {
 	return states[activeStateName];
+}
+
+string Animator::getActiveStateName() const {
+	return activeStateName;
 }

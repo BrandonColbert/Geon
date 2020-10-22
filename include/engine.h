@@ -9,10 +9,13 @@
 #include <unordered_set>
 #include <vector>
 #include "actor.h"
-#include "math/vector2.h"
+#include "structures/vector2.h"
 #include "system.h"
 #include "utils/property.h"
 
+/**
+ * Backbone of the skeleton that is the current scene which represents the game
+ */
 class Engine {
 	public:
 		/** Whether the game is running */
@@ -45,7 +48,7 @@ class Engine {
 		void clock();
 
 		/**
-		 * @return Engine instance
+		 * @return Engine singleton instance
 		 */
 		static Engine& getInstance();
 
@@ -120,12 +123,13 @@ class Engine {
 				static Property<float> time;
 		};
 
+		/** Used for interaction with the visuals */
 		class Display {
 			public:
 				/** Display center */
 				static Vector2 center;
 
-				/** ZOOOOOOM */
+				/** Not meetings */
 				static float zoom;
 
 				/**
@@ -134,8 +138,14 @@ class Engine {
 				static std::tuple<int, int> getScreenSize();
 		};
 
+		/** Enables batch interactions with spawned actors */
 		class Actors {
 			public:
+				/**
+				 * Executes the action for all actors containing the specified component types
+				 * @tparam T Component types
+				 * @param action Action be executed on the matching actors
+				 */
 				template<typename ...T>
 				static void forEach(std::function<void(Actor&)> action) {
 					std::vector<Actor*> queried;
@@ -149,6 +159,7 @@ class Engine {
 				}
 		};
 
+		/** All the systems which control updates/renders using the components bound to actors */
 		class Systems {
 			public:
 				/**

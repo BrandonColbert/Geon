@@ -1,4 +1,4 @@
-#include "math/vector2.h"
+#include "structures/vector2.h"
 
 #include <cmath>
 
@@ -32,16 +32,24 @@ Vector2::Vector2(const Vector2 &other) {
 	y = other.y;
 }
 
-float Vector2::sqr_magnitude() {
+float Vector2::sqrMagnitude() {
 	return x * x + y * y;
 }
 
 float Vector2::magnitude() {
-	return sqrt(sqr_magnitude());
+	return sqrt(sqrMagnitude());
 }
 
 Vector2 Vector2::normalized() {
 	return *this / magnitude();
+}
+
+Vector2 Vector2::scale(Vector2 other) {
+	return Vector2(x * other.x, y * other.y);
+}
+
+Vector2 Vector2::abs() {
+	return Vector2(std::abs(x), std::abs(y));
 }
 
 Vector2::operator tuple<float, float>() {
@@ -68,7 +76,7 @@ Vector2& Vector2::operator=(const Vector2 &other) {
 	return *this;
 }
 
-Vector2 Vector2::operator+(const Vector2 &other) {
+Vector2 Vector2::operator+(const Vector2 &other) const {
 	return Vector2(x + other.x, y + other.y);
 }
 
@@ -78,7 +86,7 @@ Vector2& Vector2::operator+=(const Vector2 &other) {
 	return *this;
 }
 
-Vector2 Vector2::operator-(const Vector2 &other) {
+Vector2 Vector2::operator-(const Vector2 &other) const {
 	return Vector2(x - other.x, y - other.y);
 }
 
@@ -88,7 +96,7 @@ Vector2& Vector2::operator-=(const Vector2 &other) {
 	return *this;
 }
 
-Vector2 Vector2::operator*(float value) {
+Vector2 Vector2::operator*(float value) const {
 	return Vector2(x * value, y * value);
 }
 
@@ -102,7 +110,7 @@ Vector2 operator*(float scalar, const Vector2 &vector) {
 	return Vector2(vector.x * scalar, vector.y * scalar);
 }
 
-Vector2 Vector2::operator/(float value) {
+Vector2 Vector2::operator/(float value) const {
 	return Vector2(x / value, y / value);
 }
 

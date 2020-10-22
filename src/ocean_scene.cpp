@@ -11,8 +11,8 @@
 #include "components/spawner.h"
 #include "components/sprite.h"
 #include "engine.h"
+#include "structures/vector2.h"
 #include "system.h"
-#include "math/vector2.h"
 #include "utils/random.h"
 
 using std::get;

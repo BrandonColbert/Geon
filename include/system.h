@@ -1,5 +1,8 @@
 #pragma once
 
+/**
+ * Uses the component data of actors to create effects
+ */
 class System {
 	public:
 		virtual ~System();

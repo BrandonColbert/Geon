@@ -74,6 +74,9 @@ class Actor {
 		 * @param name Name to give the actor
 		 */
 		static Actor& spawn(std::string name = "Actor");
+
+		bool operator==(const Actor&);
+		bool operator!=(const Actor&);
 	private:
 		static std::queue<unsigned int> recycle;
 		static unsigned int nextId;

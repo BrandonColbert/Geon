@@ -14,9 +14,24 @@ using Actors = Engine::Actors;
 using Display = Engine::Display;
 
 void SpriteSystem::render() {
+	auto center = Display::center;
+	auto screenSize = Display::getScreenSize();
+	auto halfWidth = get<0>(screenSize) / 2;
+	auto halfHeight = get<1>(screenSize) / 2;
+	auto startX = halfWidth - center.x;
+	auto startY = halfHeight + center.y;
+
 	vector<Actor*> actors;
 
 	Actors::forEach<Sprite, Rect>([&](Actor &actor) {
+		// auto &rect = actor.get<Rect>();
+
+		// if(rect.position.x < (center.x - halfWidth) || (center.x + halfWidth) < rect.position.x)
+		// 	return;
+
+		// if(rect.position.y < (center.y - halfHeight) || (center.y + halfHeight) < rect.position.y)
+		// 	return;
+
 		actors.push_back(&actor);
 	});
 
@@ -27,14 +42,9 @@ void SpriteSystem::render() {
 		return leftDepth < rightDepth;
 	});
 
-	auto center = Display::center;
-	auto screenSize = Display::getScreenSize();
-	auto width = get<0>(screenSize);
-	auto height = get<1>(screenSize);
-
 	for(auto actor : actors) {
-		auto &sprite = actor->get<Sprite>();
 		auto &rect = actor->get<Rect>();
+		auto &sprite = actor->get<Sprite>();
 
 		SDL_Rect source;
 		source.x = sprite.uv.x;
@@ -43,8 +53,8 @@ void SpriteSystem::render() {
 		source.h = sprite.size.y;
 
 		SDL_Rect dest;
-		dest.x = width / 2 + rect.position.x - rect.size.x / 2 - center.x;
-		dest.y = height / 2 - rect.position.y - rect.size.y / 2 + center.y;
+		dest.x = startX + rect.position.x - rect.size.x / 2 + sprite.offset.x;
+		dest.y = startY - rect.position.y - rect.size.y / 2 - sprite.offset.y;
 		dest.w = rect.size.x;
 		dest.h = rect.size.y;
 

@@ -4,6 +4,7 @@
 #include "console.h"
 #include "engine.h"
 #include "systems/animation_system.h"
+#include "systems/collision_system.h"
 #include "systems/control_system.h"
 #include "systems/focus_system.h"
 #include "systems/lifespan_system.h"
@@ -33,6 +34,7 @@ void Scene::start() {
 	Systems::add<SpawnerSystem>();
 	Systems::add<ControlSystem>();
 	Systems::add<PlayerSystem>();
+	Systems::add<CollisionSystem>();
 	Systems::add<MotionSystem>();
 	Systems::add<LifespanSystem>();
 	Systems::add<FocusSystem>();

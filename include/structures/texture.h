@@ -2,7 +2,7 @@
 
 #include <SDL2/SDL_image.h>
 #include <string>
-#include "graphics/color.h"
+#include "structures/color.h"
 
 /**
  * Holds an image texture

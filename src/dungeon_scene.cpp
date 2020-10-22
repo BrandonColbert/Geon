@@ -1,95 +1,88 @@
 #include "scenes/dungeon_scene.h"
 
 #include "actor.h"
-#include "animation/state.h"
 #include "components/animator.h"
+#include "components/collider.h"
 #include "components/controller.h"
+#include "components/focus.h"
 #include "components/motion.h"
 #include "components/player.h"
 #include "components/rect.h"
 #include "components/sprite.h"
-#include "engine.h"
-#include "graphics/texture.h"
-#include "math/moth.h"
-#include "math/vector2.h"
+#include "generation/tilemap.h"
+#include "structures/grid.h"
+#include "structures/state.h"
+#include "structures/texture.h"
+#include "structures/vector2.h"
+#include "utils/format.h"
+#include "utils/moth.h"
 
-using Actors = Engine::Actors;
-using Systems = Engine::Systems;
-
-class SkeletonSystem : public System {
-	void update() override {
-		Actors::forEach<Player, Controller, Animator>([](Actor &actor) {
-			auto &controller = actor.get<Controller>();
-			auto &animator = actor.get<Animator>();
-
-			auto move = controller.move;
-			auto lastMove = controller.lastMove;
-
-			if(move.sqr_magnitude() > 0) {
-				if(move.x != 0) {
-					if(lastMove.x != move.x) {
-						switch(Moth::sign(move.x)) {
-							case -1:
-								animator.transition("left");
-								break;
-							case 1:
-								animator.transition("right");
-								break;
-						}
-					}
-				} else if(lastMove != move) {
-					switch(Moth::sign(move.y)) {
-						case -1:
-							animator.transition("down");
-							break;
-						case 1:
-							animator.transition("up");
-							break;
-					}
-				}
-			} else {
-				switch(Moth::sign(lastMove.y)) {
-					case -1:
-						animator.transition("idle_down");
-						break;
-					case 1:
-						animator.transition("idle_up");
-						break;
-				}
-
-				switch(Moth::sign(lastMove.x)) {
-					case -1:
-						animator.transition("idle_left");
-						break;
-					case 1:
-						animator.transition("idle_right");
-						break;
-				}
-			}
-		});
-	}
-};
+using namespace std;
+using namespace Format;
+using Tile = Tilemap::Tile;
 
 void DungeonScene::create() {
-	Systems::add<SkeletonSystem>();
-
 	auto &skeleton = Actor::spawn("Skeleton");
 	skeleton.add(new Player());
-	skeleton.add(new Sprite(Texture("./resources/skeleton.png"), 2));
-	skeleton.add(new Rect(Vector2(100, 0), Vector2(150, 150)));
-	skeleton.add(new Animator());
-	skeleton.add(new Controller(8));
+	skeleton.add(new Sprite(Texture("./resources/skeleton.png"), 1));
+	skeleton.add(new Rect(Vector2::zero, Vector2::one * 75));
+	skeleton.add(new Controller(4));
 	skeleton.add(new Motion());
+	skeleton.add(new Collider(Vector2(25, 50)));
+	skeleton.add(new Focus());
 
 	auto &motion = skeleton.get<Motion>();
-	motion.terminalVelocity = Vector2::one.normalized() * 300;
+	motion.terminalVelocity = Vector2::one.normalized() * 150;
 	motion.friction = 0.975;
 
 	auto &sprite = skeleton.get<Sprite>();
-	sprite.size = Vector2(64, 64);
+	sprite.size = Vector2::one * 64;
+	sprite.offset = Vector2::up * 8;
 
 	auto count = 8;
 	auto duration = 1;
+
+	skeleton.add(new Animator([](Actor &actor, string currentState) {
+		auto &controller = actor.get<Controller>();
+		auto move = controller.move;
+		auto lastMove = controller.lastMove;
+
+		if(move.sqrMagnitude() > 0) {
+			if(move.x != 0) {
+				if(lastMove.x != move.x) {
+					switch(Moth::sign(move.x)) {
+						case -1:
+							return "left";
+						case 1:
+							return "right";
+					}
+				}
+			} else if(lastMove != move) {
+				switch(Moth::sign(move.y)) {
+					case -1:
+						return "down";
+					case 1:
+						return "up";
+				}
+			}
+		} else {
+			switch(Moth::sign(lastMove.y)) {
+				case -1:
+					return "idle_down";
+				case 1:
+					return "idle_up";
+			}
+
+			switch(Moth::sign(lastMove.x)) {
+				case -1:
+					return "idle_left";
+				case 1:
+					return "idle_right";
+			}
+		}
+
+		return currentState.c_str();
+	}));
 
 	auto &animator = skeleton.get<Animator>();
 	animator.defineState(State("idle_up", duration, {{0, 0}}));
@@ -101,4 +94,38 @@ void DungeonScene::create() {
 	animator.defineState(State("down", duration, {1, 2}, count, true));
 	animator.defineState(State("right", duration, {1, 3}, count, true));
 	animator.transition("idle_down");
+
+	const auto n = Tile::None;
+	const auto f = Tile::Floor;
+	const auto w = Tile::Wall;
+
+	Tilemap floor(Grid<Tile>{
+		{n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n},
+		{n, n, n, n, n, n, n, n, n, n, n, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, n},
+		{n, n, n, n, n, n, n, n, n, n, n, w, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, w, w, w, w, w, w, w, w, w, w, n},
+		{n, w, w, w, w, w, w, w, w, n, n, w, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, w, n},
+		{n, w, f, f, f, f, f, f, w, n, n, w, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, w, n},
+		{n, w, f, f, f, f, f, f, w, n, n, w, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, w, w, w, w, w, w, w, f, f, w, n},
+		{n, w, f, f, f, f, f, f, w, n, n, w, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, w, f, f, f, f, f, w, f, f, w, n},
+		{n, w, f, f, f, f, f, f, w, n, n, w, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, w, f, f, f, f, f, w, f, f, w, n},
+		{n, w, f, f, f, f, f, f, w, n, n, w, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, w, f, f, f, f, f, w, f, f, w, n},
+		{n, w, f, f, f, f, f, f, w, n, n, w, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, w, f, f, f, f, f, w, f, f, w, n},
+		{n, w, w, w, f, f, w, w, w, n, n, w, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, w, f, f, f, f, f, w, f, f, w, n},
+		{n, n, n, w, f, f, w, n, n, n, n, w, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, w, f, f, f, f, f, w, f, f, w, n},
+		{n, n, n, w, f, f, w, n, n, n, n, w, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, w, f, f, f, f, f, w, f, f, w, n},
+		{n, w, w, w, f, f, w, w, w, n, n, w, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, w, w, f, f, w, w, w, f, f, w, n},
+		{n, w, f, f, f, f, f, f, w, n, n, w, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, w, f, f, w, n, w, f, f, w, n},
+		{n, w, f, f, f, f, f, f, w, n, n, w, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, w, f, f, w, n, w, f, f, w, n},
+		{n, w, f, f, f, f, f, f, w, n, n, w, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, w, f, f, w, n, w, f, f, w, n},
+		{n, w, f, f, f, f, f, f, w, w, w, w, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, w, f, f, w, n, w, f, f, w, n},
+		{n, w, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, w, f, f, w, w, w, f, f, w, n},
+		{n, w, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, w, f, f, f, f, f, f, f, w, n},
+		{n, w, f, f, f, f, f, f, w, w, w, w, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, w, f, f, f, f, f, f, f, w, n},
+		{n, w, w, w, w, w, w, w, w, n, n, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, w, n},
+		{n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n}
+	});
+
+	floor.tileSize = 50;
+	floor.actualize();
+	floor.visualize();
 }

@@ -70,3 +70,11 @@ Actor& Actor::spawn(string name) {
 
 	return *actor;
 }
+
+bool Actor::operator==(const Actor &other) {
+	return id == other.id;
+}
+
+bool Actor::operator!=(const Actor &other) {
+	return id != other.id;
+}

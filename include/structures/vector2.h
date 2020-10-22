@@ -17,9 +17,20 @@ class Vector2 {
 		Vector2(const std::tuple<float, float> &position);
 		Vector2(const Vector2&);
 
-		float sqr_magnitude();
+		float sqrMagnitude();
 		float magnitude();
 		Vector2 normalized();
+
+		/**
+		 * @param other Vector to multiply component wise
+		 * @return Component wise multiplication of this vector and the given
+		 */
+		Vector2 scale(Vector2 other);
+
+		/**
+		 * @return A new vector containing with components as the absolute value of this vector's components
+		 */
+		Vector2 abs();
 
 		operator std::tuple<float, float>();
 		friend std::ostream& operator<<(std::ostream &stream, const Vector2 &vector);
@@ -29,16 +40,16 @@ class Vector2 {
 
 		Vector2& operator=(const Vector2&);
 
-		Vector2 operator+(const Vector2 &other);
+		Vector2 operator+(const Vector2 &other) const;
 		Vector2& operator+=(const Vector2 &other);
 
-		Vector2 operator-(const Vector2 &other);
+		Vector2 operator-(const Vector2 &other) const;
 		Vector2& operator-=(const Vector2 &other);
 
-		Vector2 operator*(float value);
+		Vector2 operator*(float value) const;
 		Vector2& operator*=(float value);
 		friend Vector2 operator*(float scalar, const Vector2 &vector);
 
-		Vector2 operator/(float value);
+		Vector2 operator/(float value) const;
 		Vector2& operator/=(float value);
 };

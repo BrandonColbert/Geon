@@ -4,6 +4,9 @@
 #include "actor.h"
 #include "component.h"
 
+/**
+ * Continuously creates actors
+ */
 class Spawner : public Component {
 	public:
 		/** Spawns a single actor */

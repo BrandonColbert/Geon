@@ -9,9 +9,10 @@
 #include <vector>
 #include "components/sprite.h"
 #include "console.h"
-#include "utils/printer.h"
+#include "utils/format.h"
 
 using namespace std;
+using namespace Format;
 using Time = Engine::Time;
 
 void Engine::setupDisplay(string name, int width, int height) {
@@ -33,7 +34,7 @@ void Engine::setupDisplay(string name, int width, int height) {
 		SDL_WINDOWPOS_CENTERED,
 		width,
 		height,
-		0
+		SDL_WINDOW_RESIZABLE
 	);
 
 	renderer = SDL_CreateRenderer(
@@ -64,11 +65,8 @@ Engine::~Engine() {
 }
 
 void Engine::registerActor(Actor *actor) {
-	if(actors.find(actor->id) != actors.end()) {
-		stringstream stream;
-		Printer::printTo(stream, "Attempted to manually register Actor % to engine\n", actor->id);
-		throw runtime_error(stream.str().c_str());
-	}
+	if(actors.find(actor->id) != actors.end())
+		throw runtime_error(format("Attempted to manually register Actor % to engine\n", actor->id));
 
 	actors.insert({actor->id, actor});
 }

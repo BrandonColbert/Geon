@@ -6,4 +6,10 @@ Sprite::Sprite(Texture texture, float depth) : texture(texture) {
 	this->depth = depth;
 }
 
-Sprite::Sprite() {}
+Sprite::Sprite(float depth) {
+	this->depth = depth;
+}
+
+Sprite::Sprite() {
+	depth = 0;
+}

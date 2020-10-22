@@ -1,8 +1,11 @@
 #pragma once
 
 #include "component.h"
-#include "math/vector2.h"
+#include "structures/vector2.h"
 
+/**
+ * Enables an object to have physically based movement
+ */
 class Motion : public Component {
 	public:
 		/** Current velocity of the object */

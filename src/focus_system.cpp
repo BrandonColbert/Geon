@@ -3,7 +3,7 @@
 #include "components/focus.h"
 #include "components/rect.h"
 #include "engine.h"
-#include "math/vector2.h"
+#include "structures/vector2.h"
 
 using Actors = Engine::Actors;
 using Display = Engine::Display;
