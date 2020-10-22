@@ -14,7 +14,9 @@ void Sequence::moveNext() {
 	value = s[0] & 0x7fffffff;
 }
 
-specialize(int, Integer)
-specialize(long, Integer)
-specialize(float, Rational)
-specialize(double, Rational)
+namespace Random {
+	specialize(int, Integer)
+	specialize(long, Integer)
+	specialize(float, Rational)
+	specialize(double, Rational)
+}

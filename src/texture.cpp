@@ -7,6 +7,14 @@
 
 using namespace std;
 
+template<typename T, typename U>
+T exchange(T &a, U &&b) {
+	auto temp = move(a);
+	a = forward<U>(b);
+
+	return temp;
+}
+
 Texture::Texture(string path) : path(path) {
 	surface = IMG_Load(path.c_str());
 

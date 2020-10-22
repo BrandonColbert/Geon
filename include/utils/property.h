@@ -14,7 +14,7 @@ class Property {
 
 	public:
 		Property(Getter getter) : getter(getter) {
-			setter = [](const auto&) {
+			setter = [](const T&) {
 				throw std::runtime_error("Unable to set on property");
 			};
 		}

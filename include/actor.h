@@ -46,7 +46,14 @@ class Actor {
 		 */
 		template<typename ...T/*, typename = std::enable_if_t<std::is_base_of_v<Component, T>>*/>
 		bool has() {
-			return (... && (components.find(typeid(T)) != components.end()));
+			for(auto v : {(components.find(typeid(T)) != components.end())...})
+				if(!v)
+					return false;
+
+			return true;
+
+			//std=c++17 works but no fold expressions??
+			// return (... && (components.find(typeid(T)) != components.end()));
 		}
 
 		/**

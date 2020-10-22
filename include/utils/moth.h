@@ -24,4 +24,15 @@ namespace Moth {
 	T lerp(T a, T b, T t) {
 		return a + (b - a) * t;
 	}
+
+	/**
+	 * @param value Original value
+	 * @param min Min value
+	 * @param max Max value
+	 * @return The value clamped between min and max
+	 */
+	template<typename T>
+	T clamp(T value, T min, T max) {
+		return std::max(min, std::min(value, max));
+	}
 };

@@ -20,7 +20,7 @@ void Tilemap::actualize() {
 	auto halfWidth = tiles.getWidth() / 2;
 	auto halfHeight = tiles.getHeight() / 2;
 
-	tiles.forEach([&](auto i, auto j) {
+	tiles.forEach([&](int i, int j) {
 		if(tiles(i, j) == Tile::None)
 			return;
 
@@ -65,7 +65,7 @@ void Tilemap::visualize() {
 	// 	return stream.str();
 	// });
 
-	cout << tiles.toString([](auto v) {
+	cout << tiles.toString([](Tile v) {
 		switch(v) {
 			case Tile::None:
 				return ".";

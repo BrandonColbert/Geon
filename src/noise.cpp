@@ -16,7 +16,7 @@ float Noise::sample(tuple<float, float> point) const {
 Grid<float> Noise::toGrid() {
 	Grid<float> grid(width, height);
 
-	grid.populate([&](auto x, auto y) -> float {
+	grid.populate([&](int x, int y) -> float {
 		return sample((float)x / (float)width, (float)y / (float)height);
 	});
 

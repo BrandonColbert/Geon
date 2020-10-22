@@ -28,10 +28,10 @@ Tilemap Floor::generate() {
 
 	for(auto j = 0.0; j < a; j++)
 		for(auto i = 0.0; i < a; i++)
-			positions.push_back({
+			positions.push_back(make_tuple(
 				width * (i + 1) / (a + 1),
 				height * (j + 1) / (a + 1)
-			});
+			));
 
 	while((int)positions.size() > roomCount)
 		positions.erase(positions.begin() + rand.next<int>(0, positions.size()));
@@ -48,14 +48,14 @@ Tilemap Floor::generate() {
 
 		newTiles = Grid<Tile>(width, height, Tile::None);
 		
-		tiles.forEach([&](auto x, auto y) {
+		tiles.forEach([&](int x, int y) {
 			if(tiles(x, y) == Tile::None)
 				return;
 
 			vector<tuple<int, int>> positions;
 			vector<float> values;
 
-			positions.push_back({x, y});
+			positions.push_back(make_tuple(x, y));
 			values.push_back(noise(x, y));
 
 			for(auto n : tiles.getNeighbors(x, y, 1.5)) {
@@ -77,7 +77,7 @@ Tilemap Floor::generate() {
 		Tilemap(tiles).visualize();
 	}
 
-	tiles.forEach([&](auto x, auto y) {
+	tiles.forEach([&](int x, int y) {
 		if(tiles(x, y) != 1)
 			return;
 

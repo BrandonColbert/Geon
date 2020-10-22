@@ -3,7 +3,8 @@
 #include "engine.h"
 #include "console.h"
 
-using std::string, std::queue;
+using std::string;
+using std::queue;
 
 queue<unsigned int> Actor::recycle;
 unsigned int Actor::nextId;

@@ -3,8 +3,10 @@
 #include <algorithm>
 #include <cmath>
 #include "engine.h"
+#include "utils/moth.h"
 
 using namespace std;
+using namespace Moth;
 using Time = Engine::Time;
 
 Animator::Animator(StateMachine stateMachine) : stateMachine(stateMachine) {}

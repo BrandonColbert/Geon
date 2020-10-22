@@ -1,5 +1,6 @@
 #include "systems/sprite_system.h"
 
+#include <algorithm>
 #include <cmath>
 #include <SDL2/SDL_image.h>
 #include <vector>

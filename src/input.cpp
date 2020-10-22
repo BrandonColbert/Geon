@@ -34,7 +34,7 @@ bool Input::IgnoreCaseComparator::operator()(const string &lhs, const string &rh
 	return lexicographical_compare(
 		lhs.begin(), lhs.end(),
 		rhs.begin(), rhs.end(),
-		[](auto l, auto r) {
+		[](char l, char r) {
 			return tolower(l) < tolower(r);
 		}
 	);

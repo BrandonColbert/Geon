@@ -1,5 +1,7 @@
 #include "structures/state.h"
 
+#include <tuple>
+
 using namespace std;
 
 State::State(string name, float duration, vector<tuple<int, int>> steps, bool loops) {
@@ -14,12 +16,14 @@ State::State(string name, float duration, tuple<int, int> start, int count, bool
 	this->duration = duration;
 	this->loops = loops;
 
-	auto [x, y] = start;
+	auto x = get<0>(start);
+	auto y = get<1>(start);
+
 	for(auto i = 0; i < count; i++)
-		steps.push_back({x + i, y});
+		steps.push_back(make_tuple(x + i, y));
 }
 
-State::State(string name, float duration, int y, int count, bool loops) : State(name, duration, {0, y}, count, loops) {}
+State::State(string name, float duration, int y, int count, bool loops) : State(name, duration, make_tuple(0, y), count, loops) {}
 
 State::State() : State("", 0) {}
 

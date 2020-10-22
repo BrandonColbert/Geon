@@ -85,14 +85,14 @@ void DungeonScene::create() {
 	}));
 
 	auto &animator = skeleton.get<Animator>();
-	animator.defineState(State("idle_up", duration, {{0, 0}}));
-	animator.defineState(State("idle_left", duration, {{0, 1}}));
-	animator.defineState(State("idle_down", duration, {{0, 2}}));
-	animator.defineState(State("idle_right", duration, {{0, 3}}));
-	animator.defineState(State("up", duration, {1, 0}, count, true));
-	animator.defineState(State("left", duration, {1, 1}, count, true));
-	animator.defineState(State("down", duration, {1, 2}, count, true));
-	animator.defineState(State("right", duration, {1, 3}, count, true));
+	animator.defineState(State("idle_up", duration, {make_tuple(0, 0)}));
+	animator.defineState(State("idle_left", duration, {make_tuple(0, 1)}));
+	animator.defineState(State("idle_down", duration, {make_tuple(0, 2)}));
+	animator.defineState(State("idle_right", duration, {make_tuple(0, 3)}));
+	animator.defineState(State("up", duration, make_tuple(1, 0), count, true));
+	animator.defineState(State("left", duration, make_tuple(1, 1), count, true));
+	animator.defineState(State("down", duration, make_tuple(1, 2), count, true));
+	animator.defineState(State("right", duration, make_tuple(1, 3), count, true));
 	animator.transition("idle_down");
 
 	const auto n = Tile::None;

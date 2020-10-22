@@ -9,7 +9,7 @@ dir := $(shell basename "$(CURDIR)")
 src := $(wildcard src/*.cpp)
 objs := ${src:.cpp=.o}
 
-CPPFLAGS += -std=c++1z -Wall
+CPPFLAGS += -std=c++11 -Wall
 CPPFLAGS += $(foreach dir, include, -I$(dir))
 LDFLAGS += $(foreach lib, $(libs), -l$(lib))
 LDFLAGS += $(foreach config, $(configs), $(config))

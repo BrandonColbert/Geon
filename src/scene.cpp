@@ -13,7 +13,8 @@
 #include "systems/spawner_system.h"
 #include "systems/sprite_system.h"
 
-using std::string, std::get;
+using std::string;
+using std::get;
 using Systems = Engine::Systems;
 using Time = Engine::Time;
 

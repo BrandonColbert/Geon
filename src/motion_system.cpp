@@ -1,12 +1,12 @@
 #include "systems/motion_system.h"
 
-#include <algorithm>
 #include "components/motion.h"
 #include "components/rect.h"
 #include "engine.h"
 #include "structures/vector2.h"
+#include "utils/moth.h"
 
-using namespace std;
+using namespace Moth;
 using Actors = Engine::Actors;
 using Time = Engine::Time;
 

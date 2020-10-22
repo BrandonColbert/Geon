@@ -160,7 +160,7 @@ class Grid {
 			for(auto j = -v; j <= v; j++)
 				for(auto i = -v; i <= v; i++)
 					if(inside(x + i, y + j) && (i * i + j * j) <= r2 && !(i == 0 && j == 0))
-						neighbors.push_back({x + i, y + j});
+						neighbors.push_back(std::make_tuple(x + i, y + j));
 
 			return neighbors;
 		}
@@ -241,7 +241,7 @@ class Grid {
 		}
 
 		friend std::ostream& operator<<(std::ostream &stream, const Grid<T> &grid) {
-			stream << grid.toString([](auto v) {
+			stream << grid.toString([](float v) {
 				std::stringstream stream;
 				stream << v;
 
