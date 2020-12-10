@@ -2,7 +2,7 @@
 
 #include "system.h"
 
-class SpawnerSystem : public System {
+class ParticleSystem : public System {
 	public:
 		void update() override;
 };

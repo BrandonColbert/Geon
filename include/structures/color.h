@@ -1,7 +1,11 @@
 #pragma once
 
+#include <SDL2/SDL.h>
+
 class Color {
 	public:
+		static Color red, green, blue, white, black;
+
 		float r, g, b, a;
 
 		Color(float r, float g, float b);
@@ -30,4 +34,8 @@ class Color {
 
 		Color operator/(const float);
 		Color& operator/=(const float);
+
+		operator SDL_Color() const;
+
+		static Color lerp(Color a, Color b, float t);
 };

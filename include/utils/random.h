@@ -70,8 +70,8 @@ namespace Random {
 			}
 
 			/**
-			 * @param min Lower bound
-			 * @param max Upper bound
+			 * @param min Lower bound (inclusive)
+			 * @param max Upper bound (inclusive)
 			 * @return Next number in the sequence conformed to the given range
 			 */
 			template<typename T>
@@ -79,8 +79,8 @@ namespace Random {
 
 			/**
 			 * @param count Amount of numbers to take from the sequence
-			 * @param min Lower bound
-			 * @param max Upper bound
+			 * @param min Lower bound (inclusive)
+			 * @param max Upper bound (inclusive)
 			 * @return Takes numbers from the sequence and conforms them to the given range
 			 */
 			template<typename T>

@@ -16,10 +16,16 @@ using Tile = Tilemap::Tile;
 
 Tilemap::Tilemap(Grid<Tile> tiles) : tiles(tiles) {}
 
-void Tilemap::actualize() {
+Tilemap::Tilemap() {}
+
+Vector2 Tilemap::tileToWorld(Point point) {
 	auto halfWidth = tiles.getWidth() / 2;
 	auto halfHeight = tiles.getHeight() / 2;
 
+	return {(point.x - halfWidth) * tileSize, (halfHeight - point.y) * tileSize};
+}
+
+void Tilemap::actualize() {
 	tiles.forEach([&](int i, int j) {
 		if(tiles(i, j) == Tile::None)
 			return;
@@ -27,7 +33,7 @@ void Tilemap::actualize() {
 		auto &tile = Actor::spawn(format("Tile(%, %)", i, j));
 
 		tile.add(new Rect(
-			{(i - halfWidth) * tileSize, (halfHeight - j) * tileSize},
+			tileToWorld(Point(i, j)),
 			{tileSize, tileSize}
 		));
 
@@ -38,8 +44,16 @@ void Tilemap::actualize() {
 			case Tile::Floor:
 				tile.add(new Sprite(Texture("./resources/tiles/floor.png")));
 				break;
+			case Tile::Path:
+				tile.add(new Sprite(Texture("./resources/tiles/floor.png")));
+				tile.get<Sprite>().tint = Color(0.9, 0.9, 0.9);
+				break;
 			case Tile::Wall:
 				tile.add(new Sprite(Texture("./resources/tiles/wall.png")));
+				tile.add(new Collider({tileSize, tileSize}));
+				break;
+			case Tile::Plank:
+				tile.add(new Sprite(Texture("./resources/tiles/plank.png")));
 				tile.add(new Collider({tileSize, tileSize}));
 				break;
 			default:
@@ -49,34 +63,22 @@ void Tilemap::actualize() {
 }
 
 void Tilemap::visualize() {
-	// cout << tiles.toString([](float v) {
-	// 	stringstream stream;
-	// 	stream << fixed << setprecision(2);
-		
-	// 	if(v == 0)
-	// 		stream << " " << T(0);
-	// 	else {
-	// 		if(!signbit(v))
-	// 			stream << " ";
-
-	// 		stream << v;
-	// 	}
-
-	// 	return stream.str();
-	// });
-
 	cout << tiles.toString([](Tile v) {
 		switch(v) {
 			case Tile::None:
 				return ".";
 			case Tile::Floor:
-				return "O";
+				return "o";
 			case Tile::Wall:
-				return "X";
+				return "-";
 			case Tile::Path:
 				return "#";
 			default:
 				return "?";
 		}
 	});
+}
+
+Grid<Tile>& Tilemap::getTiles() {
+	return tiles;
 }

@@ -26,6 +26,6 @@ void MotionSystem::update() {
 
 		rect.position += motion.velocity * Time::deltaTime;
 
-		motion.velocity *= motion.friction;
+		motion.velocity *= 1 - motion.friction;
 	});
 }

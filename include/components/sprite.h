@@ -9,6 +9,9 @@
  */
 class Sprite : public Component {
 	public:
+		/** Color to tint the texture when rendering */
+		Color tint = Color::white;
+
 		/** Texture to use for rendering */
 		Texture texture;
 

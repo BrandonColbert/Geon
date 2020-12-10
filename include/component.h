@@ -28,6 +28,9 @@ class Component {
 
 		/** Whether the component is attached to an actor */
 		bool exists();
+
+		/** Actor which the component is attached to */
+		Actor& getActor();
 	protected:
 		Actor *actor;
 	private:

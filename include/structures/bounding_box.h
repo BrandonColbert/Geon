@@ -16,10 +16,4 @@ class BoundingBox {
 		 * @returns Whether this bounding box is overlapping with the specified bounding box
 		 */
 		bool overlaps(const BoundingBox &other) const;
-
-		/**
-		 * @param other Intruding box
-		 * @return Velocity for the specified box to move out of this box
-		 */
-		Vector2 expulsion(const BoundingBox &other) const;
 };

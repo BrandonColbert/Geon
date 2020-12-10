@@ -1,7 +1,5 @@
 #include "generation/noise.h"
 
-#include <tuple>
-
 using namespace std;
 
 Noise::Noise(int width, int height, int seed) : rand(seed) {
@@ -9,8 +7,8 @@ Noise::Noise(int width, int height, int seed) : rand(seed) {
 	this->height = height;
 }
 
-float Noise::sample(tuple<float, float> point) const {
-	return sample(get<0>(point), get<1>(point));
+float Noise::sample(Vector2 point) const {
+	return sample(point.x, point.y);
 }
 
 Grid<float> Noise::toGrid() {

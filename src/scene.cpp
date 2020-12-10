@@ -9,8 +9,9 @@
 #include "systems/focus_system.h"
 #include "systems/lifespan_system.h"
 #include "systems/motion_system.h"
+#include "systems/overlay_system.h"
+#include "systems/particle_system.h"
 #include "systems/player_system.h"
-#include "systems/spawner_system.h"
 #include "systems/sprite_system.h"
 
 using std::string;
@@ -23,16 +24,19 @@ const int Width = 640;
 const int Height = 480;
 const int Fps = 60;
 
-void Scene::start() {
+void Scene::start(bool debug) {
 	Console::print("Starting % at %x% %fps...", Name, Width, Height, Fps);
 
 	auto &engine = Engine::getInstance();
-	engine.setupDisplay(Name, Width, Height);
-	engine.running = true;
+
+	if(!debug) {
+		engine.setupDisplay(Name, Width, Height);
+		engine.running = true;
+	}
 
 	Time::targetFps = Fps;
 
-	Systems::add<SpawnerSystem>();
+	Systems::add<ParticleSystem>();
 	Systems::add<ControlSystem>();
 	Systems::add<PlayerSystem>();
 	Systems::add<CollisionSystem>();
@@ -41,6 +45,7 @@ void Scene::start() {
 	Systems::add<FocusSystem>();
 	Systems::add<AnimationSystem>();
 	Systems::add<SpriteSystem>();
+	Systems::add<OverlaySystem>();
 
 	create();
 

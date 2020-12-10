@@ -12,36 +12,49 @@ using namespace std;
 using Actors = Engine::Actors;
 
 void CollisionSystem::update() {
-	vector<Actor*> actors;
-	vector<BoundingBox> bbs;
+	vector<Actor*> mobile, immobile;
 
+	//Acquire collidable actors, reset collision state, and update bounds
 	Actors::forEach<Rect, Collider>([&](Actor &actor) {
-		actors.push_back(&actor);
+		auto &collider = actor.get<Collider>();
+		collider.isCollided = false;
+		collider.recalculateBounds();
+
+		(actor.has<Motion>() ? mobile : immobile).push_back(&actor);
 	});
 
-	bbs.reserve(actors.size());
-	for(auto actor : actors)
-		bbs.push_back(BoundingBox(
-			actor->get<Rect>().position,
-			actor->get<Collider>().size
-		));
-
-	for(auto i = (int)actors.size() - 1; i > 0; i--) {
-		auto &actor = *actors[i];
-		auto &bb = bbs[i];
+	//Check for collisions between mobile objects
+	for(auto i = (int)mobile.size() - 1; i > 0; i--) {
+		auto &actor = *mobile[i];
+		auto &collider = actor.get<Collider>();
 
 		for(auto j = i - 1; j >= 0; j--) {
-			auto &otherActor = *actors[j];
-			auto &otherBB = bbs[j];
+			auto &other = *mobile[j];
+			auto &otherCollider = other.get<Collider>();
 
-			if(!bb.overlaps(otherBB))
+			//Check overlap
+			if(!collider.bounds.overlaps(otherCollider.bounds))
 				continue;
 
-			if(actor.has<Motion>())
-				actor.get<Motion>().velocity += otherBB.expulsion(bb);
+			//Respond
+			collider.respond(actor, other);
+			otherCollider.respond(other, actor);
+		}
+	}
 
-			if(otherActor.has<Motion>())
-				otherActor.get<Motion>().velocity += bb.expulsion(otherBB);
+	//Check for collisions between mobile and immobile objects
+	for(auto mobileActor : mobile) {
+		auto &mobileCollider = mobileActor->get<Collider>();
+
+		for(auto immobileActor : immobile) {
+			auto &immobileCollider = immobileActor->get<Collider>();
+
+			//Check overlap
+			if(!mobileCollider.bounds.overlaps(immobileCollider.bounds))
+				continue;
+
+			//Respond
+			mobileCollider.respond(*mobileActor, *immobileActor);
 		}
 	}
 }

@@ -21,6 +21,10 @@ class Motion : public Component {
 		 */
 		Vector2 terminalVelocity;
 
-		/** How quickly the object slows down */
+		/**
+		 * How quickly the object slows down
+		 * 
+		 * On a scale from 0 to 1
+		 */
 		float friction;
 };

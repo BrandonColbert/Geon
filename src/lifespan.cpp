@@ -8,6 +8,10 @@ Lifespan::Lifespan(float duration) {
 	epoch = Time::time + duration;
 }
 
+float Lifespan::getEpoch() {
+	return epoch;
+}
+
 bool Lifespan::alive() {
 	return Time::time < epoch;
 }

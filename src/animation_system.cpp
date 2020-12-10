@@ -22,6 +22,6 @@ void AnimationSystem::update() {
 
 		auto &state = animator.getActiveState();
 		auto coords = state.getCoords(animator.getStep());
-		sprite.uv = Vector2(sprite.size.x * get<0>(coords), sprite.size.y * get<1>(coords));
+		sprite.uv = Vector2(sprite.size.x * coords.x, sprite.size.y * coords.y);
 	});
 }

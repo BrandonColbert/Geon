@@ -19,3 +19,7 @@ void Component::destroy() {
 bool Component::exists() {
 	return _exists;
 }
+
+Actor& Component::getActor() {
+	return *actor;
+}

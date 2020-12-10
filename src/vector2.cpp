@@ -21,10 +21,9 @@ Vector2::Vector2(float x, float y) {
 	this->y = y;
 }
 
-Vector2::Vector2(const tuple<float, float> &position) {
-	auto components = position;
-	x = get<0>(components);
-	y = get<1>(components);
+Vector2::Vector2(const Point &position) {
+	x = position.x;
+	y = position.y;
 }
 
 Vector2::Vector2(const Vector2 &other) {
@@ -50,10 +49,6 @@ Vector2 Vector2::scale(Vector2 other) {
 
 Vector2 Vector2::abs() {
 	return Vector2(std::abs(x), std::abs(y));
-}
-
-Vector2::operator tuple<float, float>() {
-	return make_tuple(x, y);
 }
 
 ostream& operator<<(ostream &stream, const Vector2 &vector) {
@@ -118,4 +113,12 @@ Vector2& Vector2::operator/=(float value) {
 	x /= value;
 	y /= value;
 	return *this;
+}
+
+Vector2 Vector2::operator-() const {
+	return Vector2(-x, -y);
+}
+
+Vector2::operator Point() const {
+	return Point(round(x), round(y));
 }

@@ -82,6 +82,10 @@ void Engine::handleEvents() {
 				break;
 			case SDL_KEYDOWN: {
 				auto keyCode = currentEvent.key.keysym.sym;
+
+				if(heldKeys.find(keyCode) != heldKeys.end())
+					break;
+
 				downKeys.insert(keyCode);
 				heldKeys.insert(keyCode);
 				break;
@@ -117,7 +121,8 @@ void Engine::update() {
 }
 
 void Engine::render() {
-	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+	SDL_Color bc = Display::backgroundColor;
+	SDL_SetRenderDrawColor(renderer, bc.r, bc.g, bc.b, bc.a);
 	SDL_RenderClear(renderer);
 
 	for(auto system : systems)

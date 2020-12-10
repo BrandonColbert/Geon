@@ -2,10 +2,11 @@
 
 #include <string>
 #include <typeindex>
-// #include <type_traits>
+#include <type_traits>
 #include <unordered_map>
 #include <queue>
 #include "component.h"
+#include "console.h"
 
 class Component;
 
@@ -28,13 +29,35 @@ class Actor {
 		 * Fails if a component of the same type already exists
 		 * @param component Component to add
 		 */
-		void add(Component *component);
+		template<typename T, typename = std::enable_if_t<std::is_base_of<Component, T>::value>>
+		T& add(T *component) {
+			if(components.find(typeid(*component)) != components.end()) {
+				Console::error("Component '%' already exists on '%'", typeid(*component).name(), name);
+				return get<T>();
+			}
+
+			component->added(*this);
+			components.emplace(typeid(*component), component);
+
+			return *component;
+		}
+
+		/**
+		 * Adds the component to this actor
+		 * 
+		 * Fails if a component of the same type already exists
+		 * @param component Component to add
+		 */
+		template<typename T, typename = std::enable_if_t<std::is_base_of<Component, T>::value && std::is_default_constructible<T>::value>>
+		T& add() {
+			return add(new T());
+		}
 
 		/**
 		 * Removes the component by type
 		 * @tparam T Component type
 		 */
-		template<typename T/*, typename = std::enable_if_t<std::is_base_of_v<Component, T>>*/>
+		template<typename T, typename = std::enable_if_t<std::is_base_of<Component, T>::value>>
 		void remove() {
 			auto component = dynamic_cast<T*>(components[typeid(T)]);
 			component->destroy();
@@ -44,23 +67,20 @@ class Actor {
 		 * @tparam T Component types
 		 * @return Whether the components exists for the actor
 		 */
-		template<typename ...T/*, typename = std::enable_if_t<std::is_base_of_v<Component, T>>*/>
+		template<typename ...T>
 		bool has() {
 			for(auto v : {(components.find(typeid(T)) != components.end())...})
 				if(!v)
 					return false;
 
 			return true;
-
-			//std=c++17 works but no fold expressions??
-			// return (... && (components.find(typeid(T)) != components.end()));
 		}
 
 		/**
 		 * @tparam T Component type
 		 * @return Component instance
 		 */
-		template<typename T/*, typename = std::enable_if_t<std::is_base_of_v<Component, T>>*/>
+		template<typename T, typename = std::enable_if_t<std::is_base_of<Component, T>::value>>
 		T& get() {
 			return *dynamic_cast<T*>(components[typeid(T)]);
 		}

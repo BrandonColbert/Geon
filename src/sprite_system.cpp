@@ -14,33 +14,39 @@ using namespace std;
 using Actors = Engine::Actors;
 using Display = Engine::Display;
 
+float SpriteSystem::EdgeOverflow = 1.25;
+const SDL_Color white = Color::white;
+
 void SpriteSystem::render() {
+	auto zoom = Display::zoom;
 	auto center = Display::center;
+	auto res = Display::targetResolution;
 	auto screenSize = Display::getScreenSize();
-	auto halfWidth = get<0>(screenSize) / 2;
-	auto halfHeight = get<1>(screenSize) / 2;
+
+	auto scale = (float)screenSize.x / (float)res.x * zoom;
+	auto ratio = (float)screenSize.x / (float)screenSize.y;
+
+	auto halfWidth = screenSize.x / scale / 2;
+	auto halfHeight = screenSize.x / scale / ratio / 2;
 	auto startX = halfWidth - center.x;
 	auto startY = halfHeight + center.y;
 
 	vector<Actor*> actors;
 
 	Actors::forEach<Sprite, Rect>([&](Actor &actor) {
-		// auto &rect = actor.get<Rect>();
+		auto &rect = actor.get<Rect>();
 
-		// if(rect.position.x < (center.x - halfWidth) || (center.x + halfWidth) < rect.position.x)
-		// 	return;
+		if(rect.position.x < (center.x - halfWidth * EdgeOverflow) || (center.x + halfWidth * EdgeOverflow) < rect.position.x)
+			return;
 
-		// if(rect.position.y < (center.y - halfHeight) || (center.y + halfHeight) < rect.position.y)
-		// 	return;
+		if(rect.position.y < (center.y - halfHeight * EdgeOverflow) || (center.y + halfHeight * EdgeOverflow) < rect.position.y)
+			return;
 
 		actors.push_back(&actor);
 	});
 
 	sort(actors.begin(), actors.end(), [&](Actor *lhs, Actor *rhs) {
-		auto leftDepth = lhs->get<Sprite>().depth;
-		auto rightDepth = rhs->get<Sprite>().depth;
-
-		return leftDepth < rightDepth;
+		return lhs->get<Sprite>().depth < rhs->get<Sprite>().depth;
 	});
 
 	for(auto actor : actors) {
@@ -54,10 +60,10 @@ void SpriteSystem::render() {
 		source.h = sprite.size.y;
 
 		SDL_Rect dest;
-		dest.x = startX + rect.position.x - rect.size.x / 2 + sprite.offset.x;
-		dest.y = startY - rect.position.y - rect.size.y / 2 - sprite.offset.y;
-		dest.w = rect.size.x;
-		dest.h = rect.size.y;
+		dest.x = (startX + rect.position.x - rect.size.x / 2 + sprite.offset.x) * scale;
+		dest.y = (startY - rect.position.y - rect.size.y / 2 - sprite.offset.y) * scale;
+		dest.w = rect.size.x * scale;
+		dest.h = rect.size.y * scale;
 
 		SDL_Point pivot;
 		pivot.x = round(sprite.pivot.x);
@@ -70,6 +76,10 @@ void SpriteSystem::render() {
 		if(sprite.flipY)
 			flipFlag |= (int)SDL_FLIP_VERTICAL;
 
+		SDL_Color tint = sprite.tint;
+		SDL_SetTextureColorMod(sprite.texture, tint.r, tint.g, tint.b);
+		SDL_SetTextureAlphaMod(sprite.texture, tint.a);
+
 		SDL_RenderCopyEx(
 			Engine::getInstance(),
 			sprite.texture,
@@ -78,5 +88,12 @@ void SpriteSystem::render() {
 			&pivot,
 			(SDL_RendererFlip)flipFlag
 		);
+
+		SDL_SetTextureColorMod(sprite.texture, white.r, white.g, white.b);
+		SDL_SetTextureAlphaMod(sprite.texture, white.a);
 	}
+
+	// static int frame = 0;
+	// if(frame++ % 20 == 0)
+	// 	Console::print("Sprites: %, FPS: %", actors.size(), Engine::Time::fps);
 }

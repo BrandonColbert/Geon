@@ -1,5 +1,13 @@
 #include "structures/color.h"
 
+#include "utils/moth.h"
+
+Color Color::red(1, 0, 0);
+Color Color::green(0, 1, 0);
+Color Color::blue(0, 0, 1);
+Color Color::white(1, 1, 1);
+Color Color::black(0, 0, 0);
+
 Color::Color(float r, float g, float b, float a) {
 	this->r = r;
 	this->g = g;
@@ -119,4 +127,22 @@ Color& Color::operator/=(const float value) {
 	a /= value;
 
 	return *this;
+}
+
+Color::operator SDL_Color() const {
+	return SDL_Color{
+		(Uint8)(r * 255),
+		(Uint8)(g * 255),
+		(Uint8)(b * 255),
+		(Uint8)(a * 255)
+	};
+}
+
+Color Color::lerp(Color a, Color b, float t) {
+	return Color(
+		Moth::lerp(a.r, b.r, t),
+		Moth::lerp(a.g, b.g, t),
+		Moth::lerp(a.b, b.b, t),
+		Moth::lerp(a.a, b.a, t)
+	);
 }

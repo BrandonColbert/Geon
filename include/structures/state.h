@@ -1,8 +1,8 @@
 #pragma once
 
 #include <string>
-#include <tuple>
 #include <vector>
+#include "structures/point.h"
 
 class State {
 	public:
@@ -18,7 +18,7 @@ class State {
 		 * @param loops Whether animation loops
 		 * @param steps Step to sprite coordinate map
 		 */
-		State(std::string name, float duration, std::vector<std::tuple<int, int>> steps = {}, bool loops = false);
+		State(std::string name, float duration, std::vector<Point> steps = {}, bool loops = false);
 
 		/**
 		 * @param name State name
@@ -27,7 +27,7 @@ class State {
 		 * @param start Coordinate of the starting sprite in the sheet
 		 * @param range Number of sprites in the animation
 		 */
-		State(std::string name, float duration, std::tuple<int, int> start, int count, bool loops = false);
+		State(std::string name, float duration, Point start, int count, bool loops = false);
 
 		/**
 		 * @param name State name
@@ -47,7 +47,7 @@ class State {
 		 * @param step Animation step index
 		 * @return Coordinates of the step in the sprite sheet
 		 */
-		std::tuple<int, int> getCoords(int step) const;
+		Point getCoords(int step) const;
 
 		/**
 		 * @return Number of steps in the animation 
@@ -55,5 +55,5 @@ class State {
 		int getStepCount() const;
 	private:
 		std::string name;
-		std::vector<std::tuple<int, int>> steps;
+		std::vector<Point> steps;
 };

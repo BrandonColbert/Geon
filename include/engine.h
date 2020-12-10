@@ -4,17 +4,18 @@
 #include <map>
 #include <SDL2/SDL.h>
 #include <string>
-#include <tuple>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
 #include "actor.h"
+#include "structures/point.h"
 #include "structures/vector2.h"
+#include "structures/color.h"
 #include "system.h"
 #include "utils/property.h"
 
 /**
- * Backbone of the skeleton that is the current scene which represents the game
+ * Contains objects that each control a specific flow
  */
 class Engine {
 	public:
@@ -63,6 +64,8 @@ class Engine {
 		 */
 		class Input {
 			public:
+				static Property<Vector2> mousePosition;
+
 				/**
 				 * @param key Key name
 				 * @return Whether the key was pressed this frame
@@ -132,10 +135,22 @@ class Engine {
 				/** Not meetings */
 				static float zoom;
 
+				/** Background color */
+				static Color backgroundColor;
+
+				/** Screen resolution to scale to */
+				static Point targetResolution;
+
 				/**
 				 * @return The width and height of the screen
 				 */
-				static std::tuple<int, int> getScreenSize();
+				static Point getScreenSize();
+
+				/**
+				 * @param screenPoint Point on the screen
+				 * @return The point on the screen converted to a point in the world
+				 */
+				static Vector2 screenToWorld(Vector2 screenPoint);
 		};
 
 		/** Enables batch interactions with spawned actors */
@@ -187,9 +202,9 @@ class Engine {
 		std::unordered_set<int> downKeys, heldKeys, upKeys;
 
 		/* Timer */
-		int fps;
-		float deltaTime;
-		float epoch;
+		int fps = 0;
+		float deltaTime = 0;
+		float epoch = 0;
 
 		Engine();
 		~Engine();

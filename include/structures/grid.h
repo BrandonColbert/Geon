@@ -4,12 +4,14 @@
 #include <initializer_list>
 #include <fstream>
 #include <functional>
+#include <limits>
 #include <ostream>
 #include <string>
 #include <sstream>
-#include <tuple>
 #include <vector>
+#include <structures/point.h>
 #include "utils/format.h"
+#include "structures/vector2.h"
 
 /**
  * Represents a 2d collection of elements
@@ -45,7 +47,7 @@ class Grid {
 			this->width = width;
 			this->height = height;
 
-			elements.reserve(width, height);			
+			elements.reserve(width * height);			
 			for(auto j = 0; j < height; j++)
 				for(auto i = 0; i < width; i++)
 					elements.push_back(func(i, j));
@@ -151,8 +153,8 @@ class Grid {
 		 * @param radius Radius in which to acquire neighbors
 		 * @return Grid spaces within the given radius of the specified space
 		 */
-		std::vector<std::tuple<int, int>> getNeighbors(int x, int y, float radius = 1) {
-			std::vector<std::tuple<int, int>> neighbors;
+		std::vector<Point> getNeighbors(int x, int y, float radius = 1) {
+			std::vector<Point> neighbors;
 
 			auto v = (int)std::ceil(radius);
 			auto r2 = radius * radius;
@@ -160,7 +162,7 @@ class Grid {
 			for(auto j = -v; j <= v; j++)
 				for(auto i = -v; i <= v; i++)
 					if(inside(x + i, y + j) && (i * i + j * j) <= r2 && !(i == 0 && j == 0))
-						neighbors.push_back(std::make_tuple(x + i, y + j));
+						neighbors.push_back(Point(x + i, y + j));
 
 			return neighbors;
 		}
@@ -170,8 +172,31 @@ class Grid {
 		 * @param radius Radius in which to acquire neighbors
 		 * @return Grid spaces within the given radius of the specified space
 		 */
-		std::vector<std::tuple<int, int>> getNeighbors(std::tuple<int, int> space, float radius = 1) {
-			return getNeighbors(std::get<0>(space), std::get<1>(space), radius);
+		std::vector<Point> getNeighbors(Point space, float radius = 1) {
+			return getNeighbors(space.x, space.y, radius);
+		}
+
+		/**
+		 * @param origin Starting point
+		 * @param direction Direction to raycast in
+		 * @param out Point meeting the criterea in the specified direction of a starting point if true is returned
+		 * @param predicate Criterea for a point to meet
+		 * @param range Max distance to check for a point
+		 * @return Whether a suitable point was found 
+		 */
+		bool raycast(Point origin, Vector2 direction, Point &point, std::function<bool(Point)> predicate, float range = std::numeric_limits<float>::infinity) {
+			Vector2 next = origin;
+
+			while(inside(next) && Vector2(next - origin).sqrMagnitude() < range * range) {
+				if(predicate(next)) {
+					point = next;
+					return true;
+				}
+
+				next += direction.normalized();
+			}
+
+			return false;
 		}
 
 		/**
@@ -216,8 +241,8 @@ class Grid {
 			return elements[y * width + x];
 		}
 
-		T& operator()(std::tuple<int, int> p) {
-			return elements[std::get<1>(p) * width + std::get<0>(p)];
+		T& operator()(Point p) {
+			return elements[p.y * width + p.x];
 		}
 
 		T& operator[](int index) {

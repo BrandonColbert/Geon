@@ -8,18 +8,15 @@ using namespace std;
 using Random::Sequence;
 
 void TestGenScene::create() {
-	Floor floor(50, 50, 0);
-	floor.roomCount = 7;
-	floor.randomness = 4;
-	floor.minRoomSideLength = 5;
+	Floor floor(30, 30, 1);
+	floor.rooms = 10;
+	floor.distribution = 15;
+	floor.spacing = 2;
+	floor.minRoomSideLength = 4;
 	floor.maxRoomSideLength = 8;
-	floor.generate();
 
-	// Sequence s(0);
+	cout << endl;
+	auto info = floor.generate();
 
-	// for(auto i = 0; i < 5; i++) {
-	// 	Floor floor(15, 15, s.next());
-	// 	floor.sparsity = 3;
-	// 	floor.generate();
-	// }
+	info.tilemap.visualize();
 }

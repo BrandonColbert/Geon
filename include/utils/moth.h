@@ -1,5 +1,7 @@
 #pragma once
 
+#include <algorithm>
+
 /**
  * Other Math aka M(O)th
  */

@@ -13,6 +13,11 @@ class Lifespan : public Component {
 		Lifespan(float duration);
 
 		/**
+		 * @return End of the lifetime
+		 */
+		float getEpoch();
+
+		/**
 		 * @return Whether the lifespan has ended
 		 */
 		bool alive();

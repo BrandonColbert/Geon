@@ -1,7 +1,7 @@
 #pragma once
 
-#include <tuple>
 #include <ostream>
+#include "structures/point.h"
 
 /**
  * Represents a 2-dimensional vector
@@ -14,7 +14,7 @@ class Vector2 {
 
 		Vector2();
 		Vector2(float x, float y);
-		Vector2(const std::tuple<float, float> &position);
+		Vector2(const Point &position);
 		Vector2(const Vector2&);
 
 		float sqrMagnitude();
@@ -32,13 +32,13 @@ class Vector2 {
 		 */
 		Vector2 abs();
 
-		operator std::tuple<float, float>();
 		friend std::ostream& operator<<(std::ostream &stream, const Vector2 &vector);
 
 		bool operator==(const Vector2&) const;
  		bool operator!=(const Vector2&) const;
 
 		Vector2& operator=(const Vector2&);
+		Vector2 operator-() const;
 
 		Vector2 operator+(const Vector2 &other) const;
 		Vector2& operator+=(const Vector2 &other);
@@ -52,4 +52,6 @@ class Vector2 {
 
 		Vector2 operator/(float value) const;
 		Vector2& operator/=(float value);
+
+		operator Point() const;
 };

@@ -59,10 +59,10 @@ Texture::Texture(const Texture &other) : path(other.path), width(other.width), h
 }
 
 Texture::Texture(Texture &&other) : path(move(other.path)) {
-	width = exchange(other.width, width);
-	height = exchange(other.height, height);
-	surface = exchange(other.surface, nullptr);
-	texture = exchange(other.texture, nullptr);
+	width = ::exchange(other.width, width);
+	height = ::exchange(other.height, height);
+	surface = ::exchange(other.surface, nullptr);
+	texture = ::exchange(other.texture, nullptr);
 }
 
 Texture::~Texture() {

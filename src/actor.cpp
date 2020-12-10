@@ -1,7 +1,6 @@
 #include "actor.h"
 
 #include "engine.h"
-#include "console.h"
 
 using std::string;
 using std::queue;
@@ -20,16 +19,6 @@ Actor::~Actor() {
 	}
 
 	recycle.push(id);
-}
-
-void Actor::add(Component *component) {
-	if(components.find(typeid(*component)) != components.end()) {
-		Console::error("Component '%' already exists on '%'", typeid(*component).name(), name);
-		return;
-	}
-
-	component->added(*this);
-	components.emplace(typeid(*component), component);
 }
 
 bool Actor::exists() {

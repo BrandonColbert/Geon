@@ -25,7 +25,7 @@ class Noise {
 		 * @param point Coordinate to get the value at
 		 * @return Noise value at point
 		 */
-		float sample(std::tuple<float, float> point) const;
+		float sample(Vector2 point) const;
 
 		int getWidth() const;
 

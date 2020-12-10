@@ -17,10 +17,3 @@ bool BoundingBox::overlaps(const BoundingBox &other) const {
 
 	return true;
 }
-
-Vector2 BoundingBox::expulsion(const BoundingBox &other) const {
-	auto delta = other.position - position;
-	auto alpha = delta.abs().scale(Vector2(2 / size.x, 2 / size.y)).magnitude();
-
-	return delta / (alpha * alpha);
-}

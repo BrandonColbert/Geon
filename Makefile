@@ -1,38 +1,46 @@
-name := geon.out
+name := geon
 username := bjcolbe
 hostname := access.computing.clemson.edu
 
-libs := SDL2_image m
+include_dir := include
+src_dir := src
+obj_dir := out
+
+share_dir := /home/$(username)/Desktop
+contents := $(include_dir) $(src_dir) resources Makefile
+
+libs := m SDL2_image SDL2_ttf
 configs := `sdl2-config --libs --cflags`
 
 dir := $(shell basename "$(CURDIR)")
-src := $(wildcard src/*.cpp)
-objs := ${src:.cpp=.o}
+src := $(wildcard $(src_dir)/*.cpp)
+objs := $(src:$(src_dir)/%.cpp=$(obj_dir)/%.o)
 
-CPPFLAGS += -std=c++11 -Wall
-CPPFLAGS += $(foreach dir, include, -I$(dir))
-LDFLAGS += $(foreach lib, $(libs), -l$(lib))
-LDFLAGS += $(foreach config, $(configs), $(config))
+CXXFLAGS += -std=c++14 -Wall
+CXXFLAGS += $(foreach dir,$(include_dir),-I$(dir))
+LDFLAGS += $(foreach lib,$(libs),-l$(lib))
+LDFLAGS += $(foreach config,$(configs),$(config))
 
-all: create-folders $(name)
+all: $(obj_dir) $(name)
 test: clear all run
 
+run:
+	@./$(name)
 clear:
 	@clear
 clean:
+	@- $(RM) $(obj_dir)/*.o
 	@- $(RM) $(name)
-	@- $(RM) $(objs)
-create-folders:
-	@mkdir -p include
-	@mkdir -p src
-run:
-	@echo =======
-	@echo Running
-	@echo =======
-	@./$(name)
+dist:
+	@tar --exclude="$(name).tar.gz" --exclude="out" --exclude="$(name)" -czvf $(name).tar.gz ../$(dir)
+share:
+	@scp -r $(contents) $(username)@$(hostname):$(share_dir)/$(dir)
+shareout:
+	@scp $(name) $(username)@$(hostname):$(share_dir)/$(name)
 
 $(name): $(objs)
-	$(LINK.cc) $(objs) $(LDFLAGS) -o $(name)
-
-share:
-	scp -r ../$(dir) $(username)@$(hostname):$(dir)
+	@$(LINK.cc) $(objs) $(LDFLAGS) -o $(name)
+$(obj_dir)/%.o: $(src_dir)/%.cpp
+	$(CXX) -c $(CXXFLAGS) $< -o $@
+$(obj_dir):
+	@mkdir -p $(obj_dir)

@@ -8,7 +8,7 @@ class Scene {
 		/**
 		 * Start the game
 		 */
-		void start();
+		void start(bool debug = false);
 	protected:
 		/**
 		 * Adds for specific game

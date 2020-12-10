@@ -2,6 +2,16 @@
 
 using namespace std;
 using Input = Engine::Input;
+using Display = Engine::Display;
+
+Property<Vector2> Input::mousePosition([]() {
+	int x, y;
+	SDL_GetMouseState(&x, &y);
+
+	auto screenSize = Display::getScreenSize();
+
+	return Vector2(x - screenSize.x / 2, screenSize.y / 2 - y);
+});
 
 bool Input::down(string key) {
 	return Input::down(keyToCode[key]);
@@ -48,7 +58,7 @@ map<string, int, Input::IgnoreCaseComparator> Input::keyToCode{
 	{"LAlt", 0x400000E2},
 	{"RAlt", 0x400000E6},
 	{"Escape", 0x1B},
-	{"Spacebar", ' '},
+	{"Space", ' '},
 	{"LeftArrow", 0x40000050},
 	{"UpArrow", 0x40000052},
 	{"RightArrow", 0x4000004F},
