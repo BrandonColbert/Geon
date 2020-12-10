@@ -32,7 +32,7 @@ class Vector2 {
 		 */
 		Vector2 abs();
 
-		friend std::ostream& operator<<(std::ostream &stream, const Vector2 &vector);
+		friend std::ostream& operator<<(std::ostream&, const Vector2&);
 
 		bool operator==(const Vector2&) const;
  		bool operator!=(const Vector2&) const;
@@ -40,18 +40,19 @@ class Vector2 {
 		Vector2& operator=(const Vector2&);
 		Vector2 operator-() const;
 
-		Vector2 operator+(const Vector2 &other) const;
-		Vector2& operator+=(const Vector2 &other);
+		Vector2 operator+(const Vector2&) const;
+		Vector2& operator+=(const Vector2&);
 
-		Vector2 operator-(const Vector2 &other) const;
-		Vector2& operator-=(const Vector2 &other);
+		Vector2 operator-(const Vector2&) const;
+		Vector2& operator-=(const Vector2&);
 
-		Vector2 operator*(float value) const;
-		Vector2& operator*=(float value);
-		friend Vector2 operator*(float scalar, const Vector2 &vector);
+		Vector2 operator*(float) const;
+		Vector2& operator*=(float);
+		friend Vector2 operator*(float, const Vector2&);
 
-		Vector2 operator/(float value) const;
-		Vector2& operator/=(float value);
+		Vector2 operator/(float) const;
+		Vector2& operator/=(float);
+		friend Vector2 operator/(float, const Vector2&);
 
 		operator Point() const;
 };

@@ -10,6 +10,7 @@
 #include "components/sprite.h"
 #include "console.h"
 #include "utils/format.h"
+#include "utils/timer.h"
 
 using namespace std;
 using namespace Format;
@@ -94,6 +95,18 @@ void Engine::handleEvents() {
 				auto keyCode = currentEvent.key.keysym.sym;
 				upKeys.insert(keyCode);
 				heldKeys.erase(keyCode);
+				break;
+			}
+			case SDL_USEREVENT: {
+				auto type = (char*)currentEvent.user.data1;
+				
+				if(strcmp("timer", type) == 0) {
+					auto timer = (Timer*)currentEvent.user.data2;
+					timer->callback();
+
+					delete timer;
+				}
+
 				break;
 			}
 		}

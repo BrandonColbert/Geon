@@ -29,7 +29,7 @@ namespace Search {
 	 * https://en.wikipedia.org/wiki/A*_search_algorithm#Pseudocode
 	 */
 	template<typename T>
-	std::vector<Point> astar(Grid<T> grid, Point start, Point goal, std::function<bool(Point)> accessible, Cost estimateCost = Heuristic::manhattanDistance, Cost cost = [](auto, auto){return 1;}) {
+	std::vector<Point> astar(const Grid<T> &grid, Point start, Point goal, std::function<bool(Point)> accessible, Cost estimateCost = Heuristic::manhattanDistance, Cost cost = [](auto, auto){return 1;}) {
 		using namespace std;
 
 		map<Point, Point> from;

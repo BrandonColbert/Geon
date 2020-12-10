@@ -13,6 +13,7 @@
 #include "systems/particle_system.h"
 #include "systems/player_system.h"
 #include "systems/sprite_system.h"
+#include "systems/mob_system.h"
 
 using std::string;
 using std::get;
@@ -39,6 +40,7 @@ void Scene::start(bool debug) {
 	Systems::add<ParticleSystem>();
 	Systems::add<ControlSystem>();
 	Systems::add<PlayerSystem>();
+	Systems::add<MobSystem>();
 	Systems::add<CollisionSystem>();
 	Systems::add<MotionSystem>();
 	Systems::add<LifespanSystem>();

@@ -1,5 +1,6 @@
 #include "generation/tilemap.h"
 
+#include <cmath>
 #include <iostream>
 #include <sstream>
 #include "actor.h"
@@ -22,7 +23,20 @@ Vector2 Tilemap::tileToWorld(Point point) {
 	auto halfWidth = tiles.getWidth() / 2;
 	auto halfHeight = tiles.getHeight() / 2;
 
-	return {(point.x - halfWidth) * tileSize, (halfHeight - point.y) * tileSize};
+	return {
+		(point.x - halfWidth) * tileSize,
+		(halfHeight - point.y) * tileSize
+	};
+}
+
+Point Tilemap::worldToTile(Vector2 position) {
+	auto halfWidth = tiles.getWidth() / 2;
+	auto halfHeight = tiles.getHeight() / 2;
+
+	return {
+		(int)round(position.x / tileSize + halfWidth),
+		(int)round(halfHeight - position.y / tileSize)
+	};
 }
 
 void Tilemap::actualize() {

@@ -6,9 +6,9 @@
 
 using namespace std;
 
-#include "console.h"
+void clip(Actor &actor, Actor &hit) {
+	//TODO: Fix no-clipping when centers are exactly aligned on an axis
 
-void defaultResponse(Actor &actor, Actor &hit) {
 	auto &collider = actor.get<Collider>();
 	auto &motion = actor.get<Motion>();
 	auto &rect = actor.get<Rect>();
@@ -50,6 +50,23 @@ void defaultResponse(Actor &actor, Actor &hit) {
 		rect.position.y -= expelTop;
 		rect.position.y += expelBot;
 	}
+}
+
+void expel(Actor &actor, Actor &hit) {
+	auto &bb = hit.get<Collider>().bounds;
+	auto &obb = actor.get<Collider>().bounds;
+
+	auto delta = obb.position - bb.position;
+	auto alpha = delta.abs().scale(2 / Vector2(bb.size.x, bb.size.y)).magnitude();
+
+	actor.get<Motion>().velocity += delta / (alpha * alpha);
+}
+
+void Collider::defaultResponse(Actor &actor, Actor &hit) {
+	if(hit.has<Motion>())
+		expel(actor, hit);
+	else
+		clip(actor, hit);
 }
 
 Collider::Collider(Vector2 size) : bounds(Vector2::zero, size) {

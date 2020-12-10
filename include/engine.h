@@ -4,6 +4,7 @@
 #include <map>
 #include <SDL2/SDL.h>
 #include <string>
+#include <type_traits>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
@@ -181,7 +182,7 @@ class Engine {
 				 * Adds a new system
 				 * @tparam T System type
 				 */
-				template<typename T>
+				template<typename T, typename = std::enable_if_t<std::is_base_of<System, T>::value && std::is_default_constructible<T>::value>>
 				static void add() {
 					getInstance().systems.push_back(new T());
 				}

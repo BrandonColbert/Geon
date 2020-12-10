@@ -7,17 +7,14 @@ using namespace std;
 using Display = Engine::Display;
 
 std::vector<Overlay*> OverlaySystem::overlays;
+TTF_Font *font;
 
 class TextOverlay : public Overlay {
 	public:
-		Vector2 positon;
+		Vector2 position;
 
 		TextOverlay(std::string text, Color color) {
-			auto surface = TTF_RenderText_Solid(
-				const_cast<TTF_Font*>(font),
-				text.c_str(),
-				color
-			);
+			auto surface = TTF_RenderText_Solid(font, text.c_str(), color);
 
 			this->texture = SDL_CreateTextureFromSurface(Engine::getInstance(), surface);
 
@@ -30,24 +27,25 @@ class TextOverlay : public Overlay {
 
 		void render() override {
 			auto dim = Display::getScreenSize();
+
 			int width, height;
 			SDL_QueryTexture(texture, NULL, NULL, &width, &height);
 
 			SDL_Rect rect;
-			rect.x = dim.x - width * 0.5;
-			rect.y = dim.y - height * 0.5;
+			rect.x = dim.x / 2 - width / 2 + dim.x / 2 * position.x;
+			rect.y = dim.y / 2 - height / 2 - dim.y / 2 * position.y;
 			rect.w = width;
 			rect.h = height;
 
 			SDL_RenderCopy(Engine::getInstance(), this->texture, NULL, &rect);
 		}
 	private:
-		const TTF_Font *font = TTF_OpenFont("Sans.ttf", 24);
 		SDL_Texture *texture;
 };
 
 OverlaySystem::OverlaySystem() {
 	TTF_Init();
+	font  = TTF_OpenFont("./resources/sans.ttf", 24);
 }
 
 OverlaySystem::~OverlaySystem() {
@@ -66,7 +64,7 @@ void OverlaySystem::render() {
 
 void OverlaySystem::text(string text, Vector2 position, Color color) {
 	auto overlay = new TextOverlay(text, color);
-	overlay->positon = position;
+	overlay->position = position;
 	overlays.push_back(overlay);
 }
 

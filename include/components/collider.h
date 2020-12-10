@@ -17,9 +17,6 @@ class Collider : public Component {
 		/** Collision region size */
 		Vector2 size;
 
-		/** Coefficient of restitution */
-		float restitution = 1;
-
 		/** Whether the collider is currently collided or not */
 		bool isCollided = false;
 
@@ -46,4 +43,6 @@ class Collider : public Component {
 		 * Actor must have a Rect component for this to work
 		 */
 		void recalculateBounds();
+
+		static void defaultResponse(Actor &actor, Actor &hit);
 };

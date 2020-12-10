@@ -138,7 +138,7 @@ class Grid {
 		/**
 		 * @return Whether the tile is inside the map
 		 */
-		bool inside(int x, int y) {
+		bool inside(int x, int y) const {
 			if(x < 0 || width <= x)
 				return false;
 			if(y < 0 || height <= y)
@@ -147,13 +147,17 @@ class Grid {
 			return true;
 		}
 
+		bool inside(Point p) const {
+			return inside(p.x, p.y);
+		}
+
 		/**
 		 * @param x Space x-coordinate
 		 * @param y Space y-coordinate
 		 * @param radius Radius in which to acquire neighbors
 		 * @return Grid spaces within the given radius of the specified space
 		 */
-		std::vector<Point> getNeighbors(int x, int y, float radius = 1) {
+		std::vector<Point> getNeighbors(int x, int y, float radius = 1) const {
 			std::vector<Point> neighbors;
 
 			auto v = (int)std::ceil(radius);
@@ -172,7 +176,7 @@ class Grid {
 		 * @param radius Radius in which to acquire neighbors
 		 * @return Grid spaces within the given radius of the specified space
 		 */
-		std::vector<Point> getNeighbors(Point space, float radius = 1) {
+		std::vector<Point> getNeighbors(Point space, float radius = 1) const {
 			return getNeighbors(space.x, space.y, radius);
 		}
 
@@ -184,12 +188,14 @@ class Grid {
 		 * @param range Max distance to check for a point
 		 * @return Whether a suitable point was found 
 		 */
-		bool raycast(Point origin, Vector2 direction, Point &point, std::function<bool(Point)> predicate, float range = std::numeric_limits<float>::infinity) {
+		bool raycast(Point origin, Vector2 direction, Point *point, std::function<bool(Point)> predicate, float range = std::numeric_limits<float>::infinity()) {
 			Vector2 next = origin;
 
 			while(inside(next) && Vector2(next - origin).sqrMagnitude() < range * range) {
 				if(predicate(next)) {
-					point = next;
+					if(point != nullptr)
+						*point = next;
+
 					return true;
 				}
 

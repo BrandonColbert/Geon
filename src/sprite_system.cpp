@@ -15,7 +15,6 @@ using Actors = Engine::Actors;
 using Display = Engine::Display;
 
 float SpriteSystem::EdgeOverflow = 1.25;
-const SDL_Color white = Color::white;
 
 void SpriteSystem::render() {
 	auto zoom = Display::zoom;
@@ -66,8 +65,8 @@ void SpriteSystem::render() {
 		dest.h = rect.size.y * scale;
 
 		SDL_Point pivot;
-		pivot.x = round(sprite.pivot.x);
-		pivot.y = round(sprite.pivot.y);
+		pivot.x = round(sprite.pivot.x * scale);
+		pivot.y = round(sprite.pivot.y * scale);
 
 		auto flipFlag = (int)SDL_FLIP_NONE;
 
@@ -89,8 +88,8 @@ void SpriteSystem::render() {
 			(SDL_RendererFlip)flipFlag
 		);
 
-		SDL_SetTextureColorMod(sprite.texture, white.r, white.g, white.b);
-		SDL_SetTextureAlphaMod(sprite.texture, white.a);
+		// SDL_SetTextureColorMod(sprite.texture, white.r, white.g, white.b);
+		// SDL_SetTextureAlphaMod(sprite.texture, white.a);
 	}
 
 	// static int frame = 0;

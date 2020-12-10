@@ -25,6 +25,8 @@ class Tilemap {
 
 		Vector2 tileToWorld(Point);
 
+		Point worldToTile(Vector2);
+
 		/**
 		 * Generates the tilemap in the scene
 		 */

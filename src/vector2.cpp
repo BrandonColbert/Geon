@@ -52,7 +52,7 @@ Vector2 Vector2::abs() {
 }
 
 ostream& operator<<(ostream &stream, const Vector2 &vector) {
-	stream << "<" << vector.x << ", " << vector.y << ">";
+	stream << "(" << vector.x << ", " << vector.y << ")";
 	return stream;
 }
 
@@ -113,6 +113,10 @@ Vector2& Vector2::operator/=(float value) {
 	x /= value;
 	y /= value;
 	return *this;
+}
+
+Vector2 operator/(float scalar, const Vector2 &vector) {
+	return Vector2(scalar / vector.x, scalar / vector.y);
 }
 
 Vector2 Vector2::operator-() const {

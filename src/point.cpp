@@ -20,7 +20,7 @@ Point::Point(const Point &other) {
 }
 
 ostream& operator<<(ostream &stream, const Point &point) {
-	stream << "<" << point.x << ", " << point.y << ">";
+	stream << "(" << point.x << ", " << point.y << ")";
 	return stream;
 }
 
