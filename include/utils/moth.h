@@ -37,4 +37,14 @@ namespace Moth {
 	T clamp(T value, T min, T max) {
 		return std::max(min, std::min(value, max));
 	}
+
+	/**
+	 * @param number 
+	 * @param denominator 
+	 * @return Modulus of number with wrapping
+	 */
+	template<typename T>
+	T wrap(T number, T denominator) {
+		return (number + denominator) % denominator;
+	}
 };

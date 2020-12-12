@@ -22,6 +22,7 @@
 #include "systems/mob_system.h"
 #include "scenes/dungeon/health.h"
 #include "scenes/dungeon/pathfinder.h"
+#include "scenes/dungeon_scene.h"
 
 using namespace std;
 using namespace Moth;
@@ -57,11 +58,7 @@ Actor& Wolf::spawn(Vector2 position) {
 				return;
 
 			auto &target = *closestPlayer;
-
-			if(distance > 500)
-				return;
-
-			wolf.get<Pathfinder>().moveTo(target);
+			wolf.get<Pathfinder>().chase(target);
 		});
 	});
 
@@ -70,7 +67,7 @@ Actor& Wolf::spawn(Vector2 position) {
 	wolf.add(new Rect(position, Vector2::one * 60));
 	wolf.add(new Controller(9));
 	wolf.add(new Mob("wolf"));
-	wolf.add<Pathfinder>();
+	wolf.add(new Pathfinder(DungeonScene::tilemap, 600));
 
 	//Health aspects
 	auto &health = wolf.add(new Health(6));

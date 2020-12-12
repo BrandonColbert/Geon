@@ -25,6 +25,7 @@
 #include "systems/mob_system.h"
 #include "scenes/dungeon/health.h"
 #include "scenes/dungeon/pathfinder.h"
+#include "scenes/dungeon_scene.h"
 
 using namespace std;
 using namespace Moth;
@@ -64,11 +65,7 @@ Actor& Skeleton::spawn(Vector2 position) {
 				return;
 
 			auto &target = *closestPlayer;
-
-			if(distance > 500)
-				return;
-
-			skeleton.get<Pathfinder>().moveTo(target);
+			skeleton.get<Pathfinder>().chase(target);
 		});
 	});
 
@@ -77,7 +74,7 @@ Actor& Skeleton::spawn(Vector2 position) {
 	skeleton.add(new Rect(position, Vector2::one * 40));
 	skeleton.add(new Controller(4));
 	skeleton.add(new Mob("skeleton"));
-	skeleton.add<Pathfinder>();
+	skeleton.add(new Pathfinder(DungeonScene::tilemap, 500));
 
 	//Health aspects
 	auto &health = skeleton.add(new Health(8));

@@ -63,6 +63,8 @@ map<string, int, Input::IgnoreCaseComparator> Input::keyToCode{
 	{"UpArrow", 0x40000052},
 	{"RightArrow", 0x4000004F},
 	{"DownArrow", 0x40000051},
+	{"Minus", 0x2D},
+	{"Equals", 0x3d},
 	{"0", '0'},
 	{"1", '1'},
 	{"2", '2'},

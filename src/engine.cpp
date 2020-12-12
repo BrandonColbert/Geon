@@ -43,10 +43,12 @@ void Engine::setupDisplay(string name, int width, int height) {
 		-1,
 		0
 	);
+
+	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 }
 
 Engine::Engine() {
-	srand(time(nullptr));
+	srand(std::time(nullptr));
 }
 
 Engine::~Engine() {
@@ -114,6 +116,9 @@ void Engine::handleEvents() {
 }
 
 void Engine::update() {
+	if(paused)
+		return;
+
 	for(auto system : systems)
 		system->update();
 
@@ -145,9 +150,13 @@ void Engine::render() {
 }
 
 void Engine::clock() {
+	if(paused)
+		return;
+
 	auto now = SDL_GetTicks() / 1000.0;
 	deltaTime = now - epoch;
 	epoch = now;
+	time += deltaTime;
 
 	if(Time::targetFps == 0)
 		return;

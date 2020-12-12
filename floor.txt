@@ -1,0 +1,29 @@
+# type: int
+# Starting seed for the levels
+seed=1
+
+# type: int
+# Dimensions of the floor
+width=50
+height=50
+
+# type: int
+# How many rooms to try to generate
+# This may be less than expected if the space is too small for rooms size and distribution
+rooms=8
+
+# type: float
+# How far rooms should be spread from each other
+distribution=2
+
+# type: float
+# How close rooms can be to each other
+spacing=1
+
+# type: float
+# Controls room size
+min_room_side_length=10
+max_room_side_length=20
+
+# type: int
+enemies_per_room=5

@@ -7,7 +7,7 @@ src_dir := src
 obj_dir := out
 
 share_dir := /home/$(username)/Desktop
-contents := $(include_dir) $(src_dir) resources Makefile
+contents := $(include_dir) $(src_dir) resources Makefile floor.txt
 
 libs := m SDL2_image SDL2_ttf
 configs := `sdl2-config --libs --cflags`

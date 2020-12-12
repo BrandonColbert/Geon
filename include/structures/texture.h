@@ -9,9 +9,6 @@
  */
 class Texture {
 	public:
-		/** Path to the image */
-		const std::string path;
-
 		/**
 		 * @param path Path to source image
 		 */
@@ -32,6 +29,9 @@ class Texture {
 
 		int getWidth();
 		int getHeight();
+		std::string getPath();
+
+		Texture& operator=(const Texture&);
 
 		operator SDL_Surface*() const;
 		operator SDL_Texture*() const;
@@ -39,5 +39,6 @@ class Texture {
 	private:
 		SDL_Surface *surface;
 		SDL_Texture *texture;
+		std::string path;
 		int width, height;
 };

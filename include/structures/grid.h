@@ -182,16 +182,18 @@ class Grid {
 
 		/**
 		 * @param origin Starting point
-		 * @param direction Direction to raycast in
+		 * @param direction World direction to raycast in
 		 * @param out Point meeting the criterea in the specified direction of a starting point if true is returned
 		 * @param predicate Criterea for a point to meet
 		 * @param range Max distance to check for a point
 		 * @return Whether a suitable point was found 
 		 */
 		bool raycast(Point origin, Vector2 direction, Point *point, std::function<bool(Point)> predicate, float range = std::numeric_limits<float>::infinity()) {
-			Vector2 next = origin;
+			auto r2 = range * range;
+			auto next = (Vector2)origin;
+			direction = Vector2(direction.x, -direction.y).normalized();
 
-			while(inside(next) && Vector2(next - origin).sqrMagnitude() < range * range) {
+			while(inside(next) && (next - origin).sqrMagnitude() < r2) {
 				if(predicate(next)) {
 					if(point != nullptr)
 						*point = next;
@@ -199,7 +201,7 @@ class Grid {
 					return true;
 				}
 
-				next += direction.normalized();
+				next += direction;
 			}
 
 			return false;

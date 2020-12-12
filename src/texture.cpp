@@ -68,7 +68,7 @@ Texture::Texture(Texture &&other) : path(move(other.path)) {
 Texture::~Texture() {
 	if(surface != nullptr)
 		SDL_FreeSurface(surface);
-	
+
 	if(texture != nullptr)
 		SDL_DestroyTexture(texture);
 }
@@ -79,6 +79,29 @@ int Texture::getWidth() {
 
 int Texture::getHeight() {
 	return height;
+}
+
+string Texture::getPath() {
+	return path;
+}
+
+Texture& Texture::operator=(const Texture &other) {
+	width = other.width;
+	height = other.height;
+	path = other.path;
+
+	if(surface != nullptr)
+		SDL_FreeSurface(surface);
+
+	if(texture != nullptr)
+		SDL_DestroyTexture(texture);
+
+	surface = SDL_ConvertSurface(other.surface, other.surface->format, 0);
+	SDL_BlitSurface(other.surface, NULL, surface, NULL);
+
+	texture = SDL_CreateTextureFromSurface(Engine::getInstance(), surface);
+
+	return *this;
 }
 
 Texture::operator SDL_Surface*() const {

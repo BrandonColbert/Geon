@@ -21,7 +21,10 @@
 class Engine {
 	public:
 		/** Whether the game is running */
-		bool running;
+		bool running = false;
+
+		/** Whether the game is paused */
+		bool paused = false;
 
 		/**
 		 * Setups the window to render
@@ -160,7 +163,7 @@ class Engine {
 				/**
 				 * Executes the action for all actors containing the specified component types
 				 * @tparam T Component types
-				 * @param action Action be executed on the matching actors
+				 * @param action Action to be executed on the matching actors
 				 */
 				template<typename ...T>
 				static void forEach(std::function<void(Actor&)> action) {
@@ -172,6 +175,15 @@ class Engine {
 
 					for(auto actor : queried)
 						action(*actor);
+				}
+
+				/**
+				 * Executes the action for all actors
+				 * @param action Action to be executed on the actors
+				 */
+				static void forEach(std::function<void(Actor&)> action) {
+					for(auto pair : getInstance().actors)
+						action(*pair.second);
 				}
 		};
 
@@ -206,6 +218,7 @@ class Engine {
 		int fps = 0;
 		float deltaTime = 0;
 		float epoch = 0;
+		float time = 0;
 
 		Engine();
 		~Engine();

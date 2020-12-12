@@ -13,5 +13,5 @@ Property<int> Time::fps([]() {
 });
 
 Property<float> Time::time([]() {
-	return SDL_GetTicks() / 1000.0;
+	return Engine::getInstance().time;
 });

@@ -248,5 +248,7 @@ FloorInfo Floor::generate() {
 	info.tilemap = Tilemap(tiles);
 	info.rooms = rooms;
 
+	Console::print("");
+
 	return info;
 }

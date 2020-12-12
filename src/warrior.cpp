@@ -1,5 +1,6 @@
 #include "scenes/dungeon/warrior.h"
 
+#include <algorithm>
 #include <cmath>
 #include <mutex>
 #include <string>
@@ -38,6 +39,7 @@ using Time = Engine::Time;
 once_flag warriorFlag;
 
 float nextAttackTime = 0;
+Texture heartTexture;
 
 struct WarriorSystem : public System {
 	void update() override {
@@ -80,22 +82,25 @@ struct WarriorSystem : public System {
 
 			//Health
 			auto &health = player.get<Health>();
-			stringstream hp;
-			Format::formatTo(hp, "HP: %/%", health.current(), health.max());
-			
-			OverlaySystem::text(hp.str(), Vector2(-0.75, -0.75), Color::white);
+			for(auto i = health.current() - 1; i >= 0; i--)
+				OverlaySystem::texture(heartTexture, Vector2(-0.95 + (i * 0.06), -0.9));
 
-			//Remaining
-			stringstream remaining;
-			Format::formatTo(remaining, "Enemies Left: %", DungeonScene::remainingMobs);
-			
-			OverlaySystem::text(remaining.str(), Vector2(0, 0.8), Color::white);
+			//Zoom
+			if(Input::down("Minus"))
+				Display::zoom = max(0.1, Display::zoom - 0.1);
+			else if(Input::down("Equals")) {
+				if(Input::held("LShift") || Input::held("RShift"))
+					Display::zoom = min(1.0, Display::zoom + 0.1);
+				else
+					Display::zoom = 0.8;
+			}
 		});
 	}
 };
 
 Actor& Warrior::spawn(Vector2 position) {
 	call_once(warriorFlag, []() {
+		heartTexture = Texture("./resources/ui/heart.png");
 		Systems::add<WarriorSystem>();
 	});
 
@@ -121,8 +126,6 @@ Actor& Warrior::spawn(Vector2 position) {
 	health.onChange = [](Actor &actor, float oldValue, float newValue) {
 		if(newValue >= oldValue)
 			return;
-
-		Console::print("% HP: % -> %", actor.name, oldValue, newValue);
 
 		actor.get<Sprite>().tint = Color(1, 0.5, 0.5);
 

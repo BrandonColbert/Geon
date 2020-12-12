@@ -13,56 +13,107 @@
 using namespace std;
 using Tile = Tilemap::Tile;
 
-bool Pathfinder::moveTo(Actor &target) {
-	auto &controller = actor->get<Controller>();
-	auto &rect = actor->get<Rect>();
+Pathfinder::Pathfinder(Tilemap &tilemap, float sight) : tilemap(tilemap) {
+	this->sight = sight;
+}
 
-	if(hasLOS(target)) {
-		// Console::print("LOSing");
-		controller.move = (target.get<Rect>().position - rect.position).normalized();
-		return true;
+bool Pathfinder::chase(Actor &target) {
+	auto position = getActor().get<Rect>().position;
+	auto targetPosition = target.get<Rect>().position;
+	auto distance = (targetPosition - position).magnitude();
+
+	if(distance <= sight) {
+		if(chasing)
+			switch(moveTo(targetPosition)) {
+				case Unreachable:
+					chasing = false;
+					canSearch = false;
+					break;
+				default:
+					canSearch = true;
+					lastKnownTargetPosition = targetPosition;
+					break;
+			}
+		else if(hasLOS(targetPosition))
+			chasing = true;
+	} else if(canSearch)
+		switch(moveTo(lastKnownTargetPosition)) {
+			case Unreachable:
+			case Reached:
+				canSearch = false;
+				break;
+			default:
+				break;
+		}			
+
+	return chasing;
+}
+
+PathResult Pathfinder::moveTo(Vector2 point) {
+	auto &tilemap = DungeonScene::tilemap;
+	auto &controller = getActor().get<Controller>();
+	auto position = getActor().get<Rect>().position;
+
+	if(tilemap.worldToTile(position) == tilemap.worldToTile(point)) {
+		path.clear();
+		controller.move = Vector2::zero;
+
+		return PathResult::Reached;
 	}
 
-	auto &tilemap = DungeonScene::tilemap;
-	auto &tiles = tilemap.getTiles();
+	if(hasLOS(point)) {
+		path.clear();
+		controller.move = (point - position).normalized();
+	} else if(path.size() > 0) {
+		auto nextPosition = tilemap.tileToWorld(path[0]);
+		controller.move = (nextPosition - position).normalized();
 
-	if(path.size() == 0) {
-		auto start = tilemap.worldToTile(rect.position);
-		auto end = tilemap.worldToTile(target.get<Rect>().position);
+		if(tilemap.worldToTile(position) == path[0])
+			path.erase(path.begin());
+	} else {
+		auto &tiles = tilemap.getTiles();
+		auto start = tilemap.worldToTile(position);
+		auto end = tilemap.worldToTile(point);
 
 		path = Search::astar(tiles, start, end, [&](Point p) {
-			return tiles(p) == Tile::Floor || p == start || p == end;
+			switch(tiles(p)) {
+				case Tile::Floor:
+				case Tile::Path:
+					return true;
+				default:
+					return p == start || p == end;
+			}
 		});
 
 		if(path.size() == 0)
-			return false;
-	}
+			return PathResult::Unreachable;
 
-	// Console::print("% -> % | %, %", start, end, path.size(), direction);
-
-	// cout << "\t" << path[0];
-	// for(auto i = 1; i < (int)path.size(); i++)
-	// 	cout << " " << path[i];
-	// cout << endl;
-
-	if(tilemap.worldToTile(rect.position) == path[0]) {
 		path.erase(path.begin());
-		return true;
+
+		// Console::print("% [%] -> % [%] | %, %", start, tiles(start), end, tiles(end), path.size(), (point - position).normalized());
+
+		// if(path.size() > 0) {
+		// 	cout << "\t" << path[0];
+
+		// 	for(auto i = 1; i < (int)path.size(); i++)
+		// 		cout << " " << path[i];
+
+		// 	cout << endl;
+		// }
 	}
 
-	// Console::print("Pathing");
-	controller.move = (tilemap.tileToWorld(path[0]) - rect.position).normalized();
-
-	return true;
+	return PathResult::Reachable;
 }
 
-bool Pathfinder::hasLOS(Actor &target) {
-	auto &tilemap = DungeonScene::tilemap;
+bool Pathfinder::hasLOS(Vector2 point) {
 	auto &tiles = tilemap.getTiles();
 
-	auto delta = target.get<Rect>().position - actor->get<Rect>().position;
+	auto start = tilemap.worldToTile(actor->get<Rect>().position);
+	auto delta = point - actor->get<Rect>().position;
+	auto direction = delta.normalized();
+	auto distance = delta.magnitude() / tilemap.tileSize;
 
-	return !tiles.raycast(tilemap.worldToTile(actor->get<Rect>().position), delta.normalized(), nullptr, [&](Point p) {
+	return !tiles.raycast(start, direction, nullptr, [&](Point p) {
 		switch(tiles(p)) {
 			case Tile::Floor:
 			case Tile::Path:
@@ -70,5 +121,5 @@ bool Pathfinder::hasLOS(Actor &target) {
 			default:
 				return true;
 		}
-	}, delta.magnitude() / tilemap.tileSize);
+	}, distance);
 }

@@ -19,6 +19,7 @@
 #include "systems/mob_system.h"
 #include "scenes/dungeon/health.h"
 #include "scenes/dungeon/pathfinder.h"
+#include "scenes/dungeon_scene.h"
 
 using namespace std;
 using Actors = Engine::Actors;
@@ -52,11 +53,7 @@ Actor& Slime::spawn(Vector2 position) {
 				return;
 
 			auto &target = *closestPlayer;
-
-			if(distance > 300)
-				return;
-
-			slime.get<Pathfinder>().moveTo(target);
+			slime.get<Pathfinder>().chase(target);
 		});
 	});
 
@@ -65,7 +62,7 @@ Actor& Slime::spawn(Vector2 position) {
 	slime.add(new Rect(position, Vector2::one * 20));
 	slime.add(new Controller(4));
 	slime.add(new Mob("slime"));
-	slime.add<Pathfinder>();
+	slime.add(new Pathfinder(DungeonScene::tilemap, 300));
 
 	//Health aspects
 	auto &health = slime.add(new Health(3));
